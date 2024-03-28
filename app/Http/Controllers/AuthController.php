@@ -115,7 +115,6 @@ class AuthController extends Controller
             ]);
         }
 
-
         if ($user->is_admin()) {
             Session::put('role', 'admin');
         } elseif ($user->is_organizer()) {
@@ -123,6 +122,7 @@ class AuthController extends Controller
         } elseif ($user->is_volunteer()) {
             Session::put('role', 'volunteer');
         }
+
 
         $token = auth()->guard('api')->attempt($credentials);
 
