@@ -91,14 +91,30 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        if (!Auth::attempt($credentials)) {
+        $user = User::where('email', $credentials['email'])->first();
+
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'FAILED',
+                'message' => 'NO EXISTING USER WITH THIS EMAIL'
+            ]);
+        }
+        else if($user->banned_at){
             return response()->json([
                 'status' => 'error',
-                'message' => 'Unauthorized',
-            ], 401);
+                'message' => 'SORRY U WERE BANNED ON ' . $user->banned_at,
+            ]);
         }
 
-        $user = Auth::user();
+
+        if (!Auth::attempt($credentials)) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'INVALID PASSWORD'
+            ]);
+        }
+
 
         if ($user->is_admin()) {
             Session::put('role', 'admin');

@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin;
 use App\Models\Application;
+use App\Models\User;
+use App\Models\Volunteer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class OrganizerController extends Controller
 {

@@ -35,4 +35,5 @@ Route::middleware('auth:api')->group(function (){
     Route::post('/application/create',[\App\Http\Controllers\VolunteerController::class,'applyForAnnouncement']);
     Route::get('/application/accept/{application}',[\App\Http\Controllers\OrganizerController::class,'acceptApplication']);
     Route::get('/application/reject/{application}',[\App\Http\Controllers\OrganizerController::class,'rejectApplication']);
+    Route::get('/user/ban/{user}',[\App\Http\Controllers\AdminController::class,'banUser']);
 });
