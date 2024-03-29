@@ -6,12 +6,11 @@ use App\Models\Annoucement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AnnouncementController extends Controller
 {
-
-
     public function createAnnouncement(Request $request)
     {
      try{
@@ -19,24 +18,28 @@ class AnnouncementController extends Controller
              'title' => 'required|string|max:255',
              'description' => 'required|string',
              'date' => 'required',
-             'location' => 'required' ,
+             'location' => 'required',
+             'type' => 'required',
              'required_skills' => 'required|array'
          ]);
 
          $user = Auth::user();
 
-         Annoucement::create([
+         $announcement = Annoucement::create([
              'title' => $request->title,
              'description' => $request->description,
              'date' => $request->date,
              'location' => $request->location ,
              'required_skills' => json_encode($request->required_skills),
+             'type' => $request->type,
              'organizer_id' => $user->organizer->id
          ]);
 
          return response()->json([
              'status' => 'success',
              'message' => 'Announcement Created Successfully !',
+             'data' => $announcement,
+             'session' => Session::get('role')
          ]);
      }
      catch(\Exception $e){
@@ -84,10 +87,8 @@ class AnnouncementController extends Controller
                 ->where(function ($query) use ($keyword){
                     $query->where('location',$keyword)
                         ->orWhere('type',$keyword);
-
                 })
                 ->get();
-
             return response()->json([
                 'status' => 'success',
                 'announcements' => $announcements

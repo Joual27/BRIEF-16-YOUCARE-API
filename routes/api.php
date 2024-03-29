@@ -22,18 +22,26 @@ Route::middleware('guest')->group(function (){
     Route::post('/login',[\App\Http\Controllers\AuthController::class,'login']);
     Route::post('/register/organizer',[\App\Http\Controllers\AuthController::class,'organizerRegistration']);
     Route::post('/register/volunteer',[\App\Http\Controllers\AuthController::class,'volunteerRegistration']);
-    Route::post('/logout',[\App\Http\Controllers\AuthController::class,'logout']);
 });
 
 
 Route::middleware('auth:api')->group(function (){
-    Route::post('/announcement/create',[\App\Http\Controllers\AnnouncementController::class,'createAnnouncement']);
-    Route::put('/announcement/update/{announcement}',[\App\Http\Controllers\AnnouncementController::class,'updateAnnouncement']);
-    Route::delete('/announcement/delete/{announcement}',[\App\Http\Controllers\AnnouncementController::class,'deleteAnnouncement']);
-    Route::get('/announcements/all',[\App\Http\Controllers\AnnouncementController::class,'allAnnouncements']);
-    Route::post('/announcements/filter',[\App\Http\Controllers\AnnouncementController::class,'announcementsFilter']);
-    Route::post('/application/create',[\App\Http\Controllers\VolunteerController::class,'applyForAnnouncement']);
-    Route::get('/application/accept/{application}',[\App\Http\Controllers\OrganizerController::class,'acceptApplication']);
-    Route::get('/application/reject/{application}',[\App\Http\Controllers\OrganizerController::class,'rejectApplication']);
-    Route::get('/user/ban/{user}',[\App\Http\Controllers\AdminController::class,'banUser']);
+    Route::group(['middleware' => 'role:organizer'],function (){
+        Route::post('/announcement/create',[\App\Http\Controllers\AnnouncementController::class,'createAnnouncement']);
+        Route::put('/announcement/update/{announcement}',[\App\Http\Controllers\AnnouncementController::class,'updateAnnouncement']);
+        Route::delete('/announcement/delete/{announcement}',[\App\Http\Controllers\AnnouncementController::class,'deleteAnnouncement']);
+        Route::get('/application/accept/{application}',[\App\Http\Controllers\OrganizerController::class,'acceptApplication']);
+        Route::get('/application/reject/{application}',[\App\Http\Controllers\OrganizerController::class,'rejectApplication']);
+        Route::get('/applications/requests/all', [\App\Http\Controllers\OrganizerController::class,'allRequests']);
+    });
+    Route::group(['middleware' => 'role:volunteer'],function (){
+        Route::get('/announcements/all',[\App\Http\Controllers\AnnouncementController::class,'allAnnouncements']);
+        Route::post('/announcements/filter',[\App\Http\Controllers\AnnouncementController::class,'announcementsFilter']);
+        Route::post('/application/create',[\App\Http\Controllers\VolunteerController::class,'applyForAnnouncement']);
+    });
+    Route::group(['middleware' => 'role:admin'],function (){
+        Route::get('/users/ban/{user}',[\App\Http\Controllers\AdminController::class,'banUser']);
+    });
+    Route::post('/logout',[\App\Http\Controllers\AuthController::class,'logout']);
 });
+

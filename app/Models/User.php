@@ -54,6 +54,26 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    public function is_admin(){
+        return $this->admin()->exists();
+    }
+    public function is_organizer(){
+        return $this->organizer()->exists();
+    }
+    public function is_volunteer(){
+        return $this->volunteer()->exists();
+    }
+
+    public function getType()
+    {
+        if ($this->is_admin()) {
+            return 'admin';
+        } elseif ($this->is_organizer()) {
+            return 'organizer';
+        } elseif ($this->is_volunteer()) {
+            return 'volunteer';
+        }
+    }
     public function volunteer(){
         return $this->hasOne(Volunteer::class);
     }
@@ -64,13 +84,5 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Admin::class);
     }
 
-    public function is_admin(){
-        return $this->admin()->exists();
-    }
-    public function is_organizer(){
-        return $this->organizer()->exists();
-    }
-    public function is_volunteer(){
-        return $this->volunteer()->exists();
-    }
+
 }

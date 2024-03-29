@@ -18,7 +18,6 @@ class Organizer extends Model
     {
         return $this->belongsTo(User::class);
     }
-
     public function annoucements()
     {
         return $this->belongsTo(Annoucement::class);
